@@ -1,0 +1,360 @@
+<!doctype html>
+<html lang="hu">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Redline Riders</title>
+<link rel="stylesheet" href="/assets/rr.css">
+</head>
+<body>
+<main class="lap">
+  <header class="fej">
+    <a class="logo" href="/" style="color: inherit; text-decoration: none;"><span class="piros">REDLINE</span> RIDERS</a>
+    <nav class="nyelv" id="nyelv"></nav>
+  </header>
+  <section id="tartalom"></section>
+</main>
+<script src="/assets/rr.js"></script>
+<script>
+// 404.html = a /route/{id} oldal (2026-10-03).
+// MIERT 404: a GitHub Pages statikus; minden nem letezo utat ez a fajl szolgal ki, a cim megmarad,
+// tehat az id a cimbol kiolvashato. A falikep QR-je (canvas-builder:446, generate-canvas-image) mar
+// NYOMTATVA erre mutat. Helyi probahoz: /404.html?id=...
+// TARTALOM (Zsolt 2026-10-03): PONTOSAN az, amit egy IDEGEN user lat az app route-info oldalan,
+// HAROM kulonbseggel: (1) a terkep alapreteg nelkuli SVG - a Mapbox-kepet a weben nem adhatjuk ki
+// (Product Terms 1.9 / 2.8.1); a sajat terkepszerver utan UGYANAZ a kep jon ide, mint az appba;
+// (2) az osszehasonlito racs (sebesseg) kimarad; (3) a kepek elmosva, csak a darabszam - a valodi
+// kep el sem jut a bongeszobe (137 fejlece). Adat: nyilvanos_ut (137), egy hivas.
+// KET PELDANYBAN ELO SZABALYOK: helySor/orszagCsoportok (lib/helyszoveg.ts) es a fel csillag
+// (components/CsillagSor.tsx) - ha az appban valtoznak, ITT IS at kell irni.
+(function () {
+  var SZ = {
+    hu: { title: 'Útvonal', terkep: 'TÉRKÉP', hozzaszolasok: 'HOZZÁSZÓLÁSOK', foAdatok: 'FŐ ADATOK',
+      idoCim: 'IDŐ', szint: 'SZINT M', kanyar: 'KANYAR', bal: 'BAL', jobb: 'JOBB', ora: 'ó', perc: 'p',
+      ertekelesCim: 'ÚT ÉRTÉKELÉSE', dim: { fun: 'Élmény', scenery: 'Táj', road: 'Útminőség', calm: 'Forgalom' },
+      ertekelesDb: function (n) { return n + ' értékelés'; },
+      utvonal: 'ÚTVONAL', tovabbi: 'TOVÁBBI INFÓK', nehezseg: 'Nehézség',
+      diff: { easy: 'Könnyű', medium: 'Közepes', hard: 'Nehéz' }, orszag: 'Ország', teljesitve: 'Teljesítve',
+      kiraly: 'Út királya', kiralyno: 'Út királynője', bajnok: 'Út bajnoka', kor: function (n) { return n + ' kör'; }, felfedezve: 'Felfedezve',
+      kepek: 'KÉPEK AZ ÚTRÓL', kepSzoveg: function (n) { return n + ' kép az útról'; },
+      bejelentkezes: 'Jelentkezz be az appban a megtekintéshez.',
+      felfedezoAdatai: 'FELFEDEZŐ ADATAI', felfedezo: 'Felfedező', motor: 'Motor',
+      megosztom: 'MEGOSZTOM', masolva: 'LINK MÁSOLVA',
+      nincsUt: 'Ez az út nem található.', nincsOldal: 'Az oldal nem található.', fooldal: 'FŐOLDAL',
+      hiba: 'Nem sikerült betölteni. Ellenőrizd a netkapcsolatot.', ujra: 'ÚJRA', tolt: 'Betöltés…' },
+    de: { title: 'Strecke', terkep: 'KARTE', hozzaszolasok: 'KOMMENTARE', foAdatok: 'ECKDATEN',
+      idoCim: 'ZEIT', szint: 'HÖHE M', kanyar: 'KURVEN', bal: 'LINKS', jobb: 'RECHTS', ora: 'Std', perc: 'Min',
+      ertekelesCim: 'STRECKENBEWERTUNG', dim: { fun: 'Erlebnis', scenery: 'Landschaft', road: 'Straßenqualität', calm: 'Verkehr' },
+      ertekelesDb: function (n) { return n + (n === 1 ? ' Bewertung' : ' Bewertungen'); },
+      utvonal: 'STRECKENVERLAUF', tovabbi: 'WEITERE INFOS', nehezseg: 'Schwierigkeit',
+      diff: { easy: 'Leicht', medium: 'Mittel', hard: 'Schwer' }, orszag: 'Land', teljesitve: 'Gefahren',
+      kiraly: 'König der Strecke', kiralyno: 'Königin der Strecke', bajnok: 'Champion der Strecke', kor: function (n) { return n + (n === 1 ? ' Runde' : ' Runden'); }, felfedezve: 'Entdeckt am',
+      kepek: 'BILDER DER STRECKE', kepSzoveg: function (n) { return n + (n === 1 ? ' Bild' : ' Bilder'); },
+      bejelentkezes: 'Melde dich in der App an, um sie zu sehen.',
+      felfedezoAdatai: 'ENTDECKER', felfedezo: 'Entdecker', motor: 'Motorrad',
+      megosztom: 'TEILEN', masolva: 'LINK KOPIERT',
+      nincsUt: 'Diese Strecke wurde nicht gefunden.', nincsOldal: 'Seite nicht gefunden.', fooldal: 'STARTSEITE',
+      hiba: 'Laden fehlgeschlagen. Prüfe deine Internetverbindung.', ujra: 'ERNEUT', tolt: 'Wird geladen…' },
+    en: { title: 'Route', terkep: 'MAP', hozzaszolasok: 'COMMENTS', foAdatok: 'KEY FACTS',
+      idoCim: 'TIME', szint: 'ELEV. M', kanyar: 'CURVES', bal: 'LEFT', jobb: 'RIGHT', ora: 'h', perc: 'min',
+      ertekelesCim: 'ROUTE RATING', dim: { fun: 'Fun', scenery: 'Scenery', road: 'Road quality', calm: 'Traffic' },
+      ertekelesDb: function (n) { return n + (n === 1 ? ' rating' : ' ratings'); },
+      utvonal: 'ROUTE', tovabbi: 'MORE INFO', nehezseg: 'Difficulty',
+      diff: { easy: 'Easy', medium: 'Medium', hard: 'Hard' }, orszag: 'Country', teljesitve: 'Ridden',
+      kiraly: 'King of the road', kiralyno: 'Queen of the road', bajnok: 'Champion of the road', kor: function (n) { return n + (n === 1 ? ' lap' : ' laps'); }, felfedezve: 'Discovered',
+      kepek: 'PHOTOS FROM THE ROAD', kepSzoveg: function (n) { return n + (n === 1 ? ' photo' : ' photos'); },
+      bejelentkezes: 'Sign in to the app to see them.',
+      felfedezoAdatai: 'DISCOVERER', felfedezo: 'Discoverer', motor: 'Motorcycle',
+      megosztom: 'SHARE', masolva: 'LINK COPIED',
+      nincsUt: 'This route could not be found.', nincsOldal: 'Page not found.', fooldal: 'HOME',
+      hiba: 'Could not load. Check your internet connection.', ujra: 'RETRY', tolt: 'Loading…' }
+  };
+  var LOC = { hu: 'hu-HU', de: 'de-DE', en: 'en-GB' };
+  var NS = 'http://www.w3.org/2000/svg';
+  var GOLD = '#FFEE00', URES = '#2D2D2D';
+  var CSILLAG = 'M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.27 5.82 22 7 14.14l-5-4.87 6.91-1.01z';
+  var reszek = location.pathname.split('/').filter(Boolean);
+  var qid = new URLSearchParams(location.search).get('id');
+  var utvonalLap = reszek[0] === 'route' || !!qid;
+  var nyers = (reszek.length === 2 && reszek[0] === 'route') ? reszek[1] : qid;
+  var id = nyers && /^[0-9a-f-]{36}$/i.test(nyers) ? nyers.toLowerCase() : null;
+  var nyelv = RR.nyelvValaszt();
+  var allapot = utvonalLap ? 'tolt' : 'nincsOldal';
+  var adat = null;
+  var klipSzam = 0;
+  var tartalom = document.getElementById('tartalom');
+  function el(tag, osztaly, szoveg) {
+    var e = document.createElement(tag);
+    if (osztaly) e.className = osztaly;
+    if (szoveg != null) e.textContent = szoveg; // DB-bol jovo szoveg SOHA nem kerul HTML-kent az oldalba
+    return e;
+  }
+  function svgEl(tag, attr) {
+    var e = document.createElementNS(NS, tag);
+    for (var k in attr) e.setAttribute(k, attr[k]);
+    return e;
+  }
+  function tiszta(s) { return typeof s === 'string' && s.trim() ? s.trim() : null; }
+  // lib/helyszoveg.ts orszagCsoportok() HU ATIRATA.
+  function legjobbNev(h) {
+    if (!h) return null;
+    return tiszta(h.place) || tiszta(h.locality) || tiszta(h.district) || tiszta(h.region);
+  }
+  function orszagCsoportok(h) {
+    if (!h || typeof h !== 'object') return [];
+    var via = Array.isArray(h.via) ? h.via : [];
+    var pontok = [];
+    if (h.start) pontok.push(h.start);
+    via.forEach(function (v) { if (v) pontok.push(v); });
+    if (via.length === 0 && h.far) pontok.push(h.far);
+    if (h.end) pontok.push(h.end);
+    var cs = [], utolso = null;
+    pontok.forEach(function (p) {
+      var nev = legjobbNev(p);
+      if (nev == null || nev === utolso) return;
+      utolso = nev;
+      var o = tiszta(p.country), e = cs[cs.length - 1];
+      if (e && e.orszag === o) e.nevek.push(nev); else cs.push({ orszag: o, nevek: [nev] });
+    });
+    return cs;
+  }
+  function orszagNev(kod) {
+    try { var n = new Intl.DisplayNames([LOC[nyelv]], { type: 'region' }).of(kod); if (n) return n; } catch (e) {}
+    return kod;
+  }
+  // components/CsillagSor.tsx HU ATIRATA: 0,25 es 0,75 kozott FEL csillag.
+  function csillagSor(ertek, meret, szammal) {
+    var v = Number(ertek);
+    if (!isFinite(v) || v <= 0) return null;
+    var sor = el('div', 'csillagsor');
+    for (var n = 1; n <= 5; n++) {
+      var k = v - (n - 1);
+      var tipus = k >= 0.75 ? 'teli' : (k >= 0.25 ? 'fel' : 'ures');
+      var svg = svgEl('svg', { viewBox: '0 0 24 24', width: meret, height: meret });
+      svg.appendChild(svgEl('path', { d: CSILLAG, fill: tipus === 'teli' ? GOLD : URES }));
+      if (tipus === 'fel') {
+        klipSzam += 1;
+        var kid = 'felcsillag' + klipSzam;
+        var defs = svgEl('defs', {});
+        var cp = svgEl('clipPath', { id: kid });
+        cp.appendChild(svgEl('rect', { x: 0, y: 0, width: 12, height: 24 }));
+        defs.appendChild(cp);
+        svg.appendChild(defs);
+        svg.appendChild(svgEl('path', { d: CSILLAG, fill: GOLD, 'clip-path': 'url(#' + kid + ')' }));
+      }
+      sor.appendChild(svg);
+    }
+    if (szammal) sor.appendChild(el('span', 'csillag-szam', v.toFixed(1)));
+    return sor;
+  }
+  // Negyzetes keret (az app RouteMap-je is negyzetes), a 200 m-rel VAGOTT ut-vonal.
+  function vonalSvg(koord) {
+    var pts = (Array.isArray(koord) ? koord : []).filter(function (p) {
+      return Array.isArray(p) && isFinite(p[0]) && isFinite(p[1]);
+    });
+    if (pts.length < 2) return null;
+    var latK = 0;
+    pts.forEach(function (p) { latK += Number(p[1]); });
+    latK = latK / pts.length;
+    var kx = Math.cos(latK * Math.PI / 180);
+    var xy = pts.map(function (p) { return [Number(p[0]) * kx, -Number(p[1])]; });
+    var minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+    xy.forEach(function (p) {
+      if (p[0] < minX) minX = p[0]; if (p[0] > maxX) maxX = p[0];
+      if (p[1] < minY) minY = p[1]; if (p[1] > maxY) maxY = p[1];
+    });
+    var oldal = Math.max(maxX - minX, maxY - minY) * 1.16 || 0.002;
+    var vx = (minX + maxX) / 2 - oldal / 2, vy = (minY + maxY) / 2 - oldal / 2;
+    var svg = svgEl('svg', { viewBox: [vx, vy, oldal, oldal].join(' '), 'class': 'vonal' });
+    var d = xy.map(function (p, i) { return (i ? 'L' : 'M') + p[0].toFixed(6) + ' ' + p[1].toFixed(6); }).join(' ');
+    [['#F5F5F5', 8], ['#E63030', 4]].forEach(function (u) {
+      svg.appendChild(svgEl('path', { d: d, fill: 'none', stroke: u[0], 'stroke-width': u[1],
+        'stroke-linecap': 'round', 'stroke-linejoin': 'round', 'vector-effect': 'non-scaling-stroke' }));
+    });
+    var r = oldal * 0.022;
+    [xy[0], xy[xy.length - 1]].forEach(function (p) {
+      svg.appendChild(svgEl('circle', { cx: p[0], cy: p[1], r: r, fill: '#F5F5F5' }));
+      svg.appendChild(svgEl('circle', { cx: p[0], cy: p[1], r: r * 0.6, fill: '#E63030' }));
+    });
+    return svg;
+  }
+  function lakatCsempe() {
+    var c = el('div', 'galeria-csempe');
+    var svg = svgEl('svg', { viewBox: '0 0 24 24', 'class': 'lakat' });
+    svg.appendChild(svgEl('rect', { x: 5, y: 11, width: 14, height: 10, rx: 2, fill: '#F5F5F5' }));
+    svg.appendChild(svgEl('path', { d: 'M8 11V8a4 4 0 0 1 8 0v3', fill: 'none', stroke: '#F5F5F5', 'stroke-width': 2 }));
+    c.appendChild(svg);
+    return c;
+  }
+  function szam(x, tizedes) {
+    return Number(x).toLocaleString(LOC[nyelv], { minimumFractionDigits: tizedes, maximumFractionDigits: tizedes });
+  }
+  // components/RideFactsBlock.tsx formatDuration: "X ó Y p" / "Y p".
+  function ido(mp) {
+    var t = SZ[nyelv], h = Math.floor(mp / 3600), m = Math.floor((mp % 3600) / 60);
+    return h > 0 ? h + ' ' + t.ora + ' ' + m + ' ' + t.perc : m + ' ' + t.perc;
+  }
+  function sor(lista, bal, jobb) {
+    var s = el('div', 'sor');
+    s.appendChild(el('span', 'bal', bal));
+    if (typeof jobb === 'string') s.appendChild(el('span', 'jobb', jobb)); else s.appendChild(jobb);
+    lista.appendChild(s);
+  }
+  function megoszt(ev) {
+    var b = ev.currentTarget;
+    var url = location.origin + '/route/' + id;
+    if (navigator.share) { navigator.share({ title: (adat && adat.nev) || 'Redline Riders', url: url }).catch(function () {}); return; }
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(url).then(function () {
+        b.textContent = SZ[nyelv].masolva;
+        setTimeout(function () { b.textContent = SZ[nyelv].megosztom; }, 2000);
+      }).catch(function () {});
+    }
+  }
+  function rajzolOk(t) {
+    tartalom.appendChild(el('h1', 'utnev', adat.nev || ''));
+    var e = adat.ertekeles || {};
+    var cs = csillagSor(e.atlag, 22, true);
+    tartalom.appendChild(cs || el('p', 'ertekeles-db', '–'));
+    if (Number(e.db) > 0) tartalom.appendChild(el('p', 'ertekeles-db', t.ertekelesDb(Number(e.db))));
+
+    var ss = el('div', 'szekcio-sor');
+    ss.appendChild(el('span', 'szekcio-cim', t.terkep));
+    var kd = el('span', 'szekcio-cim', t.hozzaszolasok);
+    kd.appendChild(el('span', 'szekcio-db', String(adat.hozzaszolas_db || 0)));
+    ss.appendChild(kd);
+    tartalom.appendChild(ss);
+    var tk = el('div', 'terkep');
+    var svg = vonalSvg(adat.koordinatak);
+    if (svg) tk.appendChild(svg);
+    tartalom.appendChild(tk);
+
+    // FO ADATOK: a felfedezesi menet (a route-info RideFactsBlock-ja). A hianyzo cella kimarad;
+    // 6 cella -> 3 oszlop, kulonben 4. A 0 m-es szint NEM latszik (Zsolt elve 2026-09-05).
+    var cellak = [];
+    if (adat.tav_km != null) cellak.push([szam(adat.tav_km, 1), 'KM']);
+    if (adat.ido_mp) cellak.push([ido(Number(adat.ido_mp)), t.idoCim]);
+    if (adat.szint != null && Number(adat.szint) > 0) cellak.push([szam(adat.szint, 0), t.szint]);
+    if (adat.kanyar != null) cellak.push([String(adat.kanyar), t.kanyar]);
+    if (adat.kanyar_bal != null) cellak.push([String(adat.kanyar_bal), t.bal]);
+    if (adat.kanyar_jobb != null) cellak.push([String(adat.kanyar_jobb), t.jobb]);
+    if (cellak.length) {
+      tartalom.appendChild(el('p', 'szekcio-cim', t.foAdatok));
+      var oszlop = cellak.length === 6 ? 3 : Math.min(4, cellak.length);
+      var racs = el('div', 'racs');
+      racs.style.gridTemplateColumns = 'repeat(' + oszlop + ', 1fr)';
+      cellak.forEach(function (c) {
+        var dv = el('div', 'cella');
+        dv.appendChild(el('div', 'ertek', c[0]));
+        dv.appendChild(el('div', 'cimke', c[1]));
+        racs.appendChild(dv);
+      });
+      var maradek = (oszlop - cellak.length % oszlop) % oszlop;
+      for (var i = 0; i < maradek; i++) racs.appendChild(el('div', 'cella'));
+      tartalom.appendChild(racs);
+    }
+
+    var dimek = ['fun', 'scenery', 'road', 'calm'].filter(function (k) { return e[k] != null && Number(e[k]) > 0; });
+    if (dimek.length) {
+      tartalom.appendChild(el('p', 'szekcio-cim', t.ertekelesCim));
+      var el1 = el('div', 'lista');
+      dimek.forEach(function (k) { sor(el1, t.dim[k], csillagSor(e[k], 18, false)); });
+      tartalom.appendChild(el1);
+    }
+
+    var csop = orszagCsoportok(adat.helyek);
+    if (csop.length) {
+      tartalom.appendChild(el('p', 'szekcio-cim', t.utvonal));
+      var osszes = csop.reduce(function (n, c) { return n + c.nevek.length; }, 0), futo = 0;
+      csop.forEach(function (c) {
+        var l = el('div', 'lista');
+        l.appendChild(el('div', 'orszag-cim', ((c.orszag ? orszagNev(c.orszag) : null) || c.orszag || '—').toUpperCase()));
+        c.nevek.forEach(function (nev) {
+          futo += 1;
+          var veg = futo === 1 || futo === osszes;
+          var s = el('div', 'sor');
+          s.appendChild(el('span', 'pont' + (veg ? ' veg' : '')));
+          s.appendChild(el('span', veg ? 'nev-veg' : 'nev-koz', nev));
+          l.appendChild(s);
+        });
+        tartalom.appendChild(l);
+      });
+    }
+
+    tartalom.appendChild(el('p', 'szekcio-cim', t.tovabbi));
+    var ti = el('div', 'lista');
+    sor(ti, t.nehezseg, t.diff[adat.nehezseg] || adat.nehezseg || '–');
+    // Az ORSZAG csak akkor kell, ha az UTVONAL blokk nem tud megjelenni (Zsolt 2026-08-10).
+    if (!csop.length) sor(ti, t.orszag, adat.orszag ? orszagNev(adat.orszag) : '–');
+    sor(ti, t.teljesitve, (adat.teljesitve || 0) + '×');
+    var nem = adat.kiraly_nem || 'male'; // az app is 'male'-re esik vissza
+    sor(ti, nem === 'female' ? t.kiralyno : (nem === 'male' ? t.kiraly : t.bajnok),
+      adat.kiraly ? '@' + adat.kiraly + ' · ' + t.kor(Number(adat.kiraly_korok) || 1) : '–');
+    sor(ti, t.felfedezve, adat.felfedezve
+      ? new Date(adat.felfedezve).toLocaleDateString(LOC[nyelv], { year: 'numeric', month: 'short', day: 'numeric' }) : '–');
+    tartalom.appendChild(ti);
+
+    // KEPEK: csak a darabszam - elmosott helykitolto, a valodi kep el sem jut ide (Zsolt 2026-10-03).
+    var kepDb = Number(adat.kep_db) || 0;
+    if (kepDb > 0) {
+      tartalom.appendChild(el('p', 'szekcio-cim', t.kepek));
+      var g = el('div', 'galeria');
+      for (var j = 0; j < Math.min(6, kepDb); j++) g.appendChild(lakatCsempe());
+      tartalom.appendChild(g);
+      var gi = el('p', 'galeria-info');
+      gi.appendChild(el('b', null, t.kepSzoveg(kepDb)));
+      gi.appendChild(document.createTextNode(t.bejelentkezes));
+      tartalom.appendChild(gi);
+    }
+
+    // FELFEDEZO ADATAI kartya; az osszehasonlito racs (sebesseg) SZANDEKOSAN nincs (Zsolt 2026-10-03).
+    if (adat.felfedezo_menetek != null || adat.ghost) {
+      tartalom.appendChild(el('p', 'szekcio-cim', t.felfedezoAdatai));
+      var fl = el('div', 'lista');
+      sor(fl, t.felfedezo, adat.felfedezo ? '@' + adat.felfedezo : (adat.ghost ? 'Ghost Rider' : '–'));
+      if (adat.felfedezo_menetek != null) {
+        sor(fl, t.teljesitve, adat.felfedezo_menetek + '×');
+        if (adat.felfedezo_motor) sor(fl, t.motor, adat.felfedezo_motor);
+      }
+      tartalom.appendChild(fl);
+    }
+
+    var gb = el('div', 'gombok');
+    RR.boltGombok(nyelv).forEach(function (b) { gb.appendChild(b); });
+    var mg = el('button', 'gomb', t.megosztom);
+    mg.type = 'button';
+    mg.onclick = megoszt;
+    gb.appendChild(mg);
+    tartalom.appendChild(gb);
+  }
+  function rajzol() {
+    var t = SZ[nyelv];
+    document.documentElement.lang = nyelv;
+    document.title = 'Redline Riders – ' + (allapot === 'ok' && adat.nev ? adat.nev : t.title);
+    RR.nyelvSav(document.getElementById('nyelv'), nyelv, function (u) { nyelv = u; rajzol(); });
+    tartalom.textContent = '';
+    tartalom.className = allapot === 'ok' ? 'utlap' : 'kozep';
+    if (allapot === 'tolt') { tartalom.appendChild(el('p', 'halk', t.tolt)); return; }
+    if (allapot === 'ok') { rajzolOk(t); return; }
+    var r = el('img', 'red'); r.src = '/red_waving.png'; r.alt = ''; tartalom.appendChild(r);
+    var uz = allapot === 'hiba' ? t.hiba : (allapot === 'nincsOldal' ? t.nincsOldal : t.nincsUt);
+    tartalom.appendChild(el('p', 'cim', uz));
+    if (allapot === 'hiba') { var u = el('button', 'gomb', t.ujra); u.type = 'button'; u.onclick = betolt; tartalom.appendChild(u); }
+    if (allapot === 'nincsOldal') { var a = el('a', 'gomb', t.fooldal); a.href = '/'; tartalom.appendChild(a); }
+    RR.boltGombok(nyelv).forEach(function (g) { tartalom.appendChild(g); });
+  }
+  function betolt() {
+    if (!utvonalLap) { rajzol(); return; }
+    if (!id) { allapot = 'nincsUt'; rajzol(); return; }
+    allapot = 'tolt'; rajzol();
+    RR.rpc('nyilvanos_ut', { p_route_id: id }).then(function (v) {
+      if (v && typeof v === 'object' && !Array.isArray(v)) { adat = v; allapot = 'ok'; }
+      else { allapot = 'nincsUt'; }
+      rajzol();
+    }).catch(function () { allapot = 'hiba'; rajzol(); });
+  }
+  betolt();
+})();
+</script>
+</body>
+</html>

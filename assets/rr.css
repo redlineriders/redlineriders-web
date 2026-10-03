@@ -25,3 +25,38 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .gomb { display: flex; align-items: center; justify-content: center; width: 100%; height: 58px; border-radius: 14px; border: none; font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 1px; background: var(--feher); color: var(--hatter); cursor: pointer; text-decoration: none; margin-top: 12px; }
 .gomb.masodlagos { background: none; color: var(--feher); border: 1px solid var(--keret); cursor: default; }
 .red { width: 170px; display: block; margin: 0 auto 16px; }
+
+/* /route oldal (2026-10-03) - az app route-info formanyelve (Zsolt: pontosan az, amit egy idegen user lat) */
+.utlap { padding-top: 20px; }
+.utnev { font-family: 'Bebas Neue', sans-serif; font-size: 34px; letter-spacing: 0.5px; line-height: 1.1; margin: 0 0 8px; }
+.csillagsor { display: flex; align-items: center; gap: 2px; }
+.csillag-szam { font-family: 'Bebas Neue', sans-serif; font-size: 22px; color: #FFEE00; margin-left: 8px; }
+.ertekeles-db { color: var(--halk); font-size: 14px; margin: 4px 0 0; }
+.szekcio-sor { display: flex; justify-content: space-between; align-items: center; margin: 20px 0 8px; }
+.szekcio-cim { font-family: 'Bebas Neue', sans-serif; font-size: 13px; letter-spacing: 2px; color: #888888; margin: 20px 0 8px; }
+.szekcio-sor .szekcio-cim { margin: 0; }
+.szekcio-db { color: var(--feher); margin-left: 6px; }
+.terkep { background: var(--felulet); border: 1px solid var(--keret); border-radius: 14px; overflow: hidden; aspect-ratio: 1 / 1; }
+.vonal { display: block; width: 100%; height: 100%; }
+.racs { display: grid; gap: 1px; background: var(--keret); border: 1px solid var(--keret); border-radius: 14px; overflow: hidden; }
+.cella { background: var(--felulet); padding: 14px 4px; text-align: center; }
+.ertek { font-family: 'Bebas Neue', sans-serif; font-size: 26px; line-height: 1.1; }
+.cimke { font-family: 'Bebas Neue', sans-serif; font-size: 13px; letter-spacing: 1.5px; color: var(--halk); margin-top: 2px; }
+.lista { background: var(--felulet); border: 1px solid var(--keret); border-radius: 12px; margin-bottom: 12px; }
+.sor { display: flex; align-items: center; gap: 12px; padding: 13px 16px; border-top: 1px solid var(--keret); }
+.sor:first-child { border-top: none; }
+.sor .bal { flex: 1; color: #CCCCCC; font-size: 14px; }
+.sor .jobb { font-weight: 600; font-size: 15px; text-align: right; }
+.orszag-cim { padding: 12px 16px 11px; font-family: 'Bebas Neue', sans-serif; font-size: 13px; letter-spacing: 2px; color: var(--halk); }
+.pont { width: 8px; height: 8px; border-radius: 4px; background: var(--halk); flex: none; margin: 0 5px; }
+.pont.veg { background: var(--piros); }
+.nev-veg { font-weight: 600; font-size: 15px; }
+.nev-koz { font-size: 14px; color: #B0B0B0; }
+.galeria { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.galeria-csempe { aspect-ratio: 1 / 1; border-radius: 8px; display: flex; align-items: center; justify-content: center; background: radial-gradient(circle at 30% 30%, #4a4036, #1d1d1d 70%); }
+.galeria-csempe:nth-child(2n) { background: radial-gradient(circle at 70% 40%, #36424a, #1d1d1d 70%); }
+.galeria-csempe:nth-child(3n) { background: radial-gradient(circle at 50% 70%, #3e4a36, #1d1d1d 70%); }
+.lakat { width: 26px; height: 26px; opacity: 0.85; }
+.galeria-info { text-align: center; margin: 10px 0 0; font-size: 15px; color: var(--halk); }
+.galeria-info b { display: block; font-family: 'Bebas Neue', sans-serif; font-weight: normal; font-size: 20px; letter-spacing: 1px; color: var(--feher); }
+.gombok { margin-top: 24px; }
