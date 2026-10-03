@@ -51,9 +51,12 @@
     tartalom.textContent = '';
     if (allapot === 'tolt') { tartalom.appendChild(el('p', 'halk', t.tolt)); return; }
     if (allapot === 'ok') {
+      // A kezdobetu MINDIG ott van, a kep FOLE toltodik. MIERT (2026-10-03): lassu mobilneten az elso
+      // betolteskor ures kor latszott; most elobb a betu, utana a kep - es ha a kep nem jon le, a betu marad.
+      var av = el('div', 'avatar avatar-betu', (adat.felhasznalonev || '?').charAt(0).toUpperCase());
       var kep = RR.biztonsagosKep(adat.avatar_url);
-      if (kep) { var i = el('img', 'avatar'); i.src = kep; i.alt = ''; tartalom.appendChild(i); }
-      else { tartalom.appendChild(el('div', 'avatar avatar-betu', (adat.felhasznalonev || '?').charAt(0).toUpperCase())); }
+      if (kep) { var i = el('img', 'avatar-kep'); i.alt = ''; i.onerror = function () { i.remove(); }; i.src = kep; av.appendChild(i); }
+      tartalom.appendChild(av);
       tartalom.appendChild(el('p', 'nev', '@' + adat.felhasznalonev));
       tartalom.appendChild(el('p', 'cim', t.cim));
       tartalom.appendChild(el('p', 'halk', t.leiras));
