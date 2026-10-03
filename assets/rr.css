@@ -1,0 +1,26 @@
+/* Redline Riders weboldal - kozos stilus. Szinek: az app constants/design.ts (2026-09-30).
+   KULSO BETOLTES NINCS (Google Fonts sem): a Bebas Neue a /fonts-bol jon. */
+@font-face { font-family: 'Bebas Neue'; src: url('/fonts/BebasNeue-Regular.ttf') format('truetype'); font-display: swap; }
+:root { --hatter: #0A0A0A; --felulet: #1A1A1A; --piros: #E63030; --feher: #F5F5F5; --halk: #8A8A8A; --keret: #2D2D2D; }
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--hatter); color: var(--feher); }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.5; -webkit-font-smoothing: antialiased; }
+.lap { max-width: 480px; margin: 0 auto; padding: 16px 16px 40px; }
+.fej { display: flex; align-items: center; justify-content: space-between; padding: 8px 0 16px; border-bottom: 1px solid var(--keret); }
+.logo { font-family: 'Bebas Neue', sans-serif; font-size: 28px; letter-spacing: 1px; }
+.piros { color: var(--piros); }
+.nyelv { display: flex; gap: 6px; }
+.nyelv button { background: none; border: 1px solid var(--keret); color: var(--halk); font-family: 'Bebas Neue', sans-serif; font-size: 17px; letter-spacing: 1px; padding: 4px 10px; border-radius: 8px; cursor: pointer; }
+.nyelv button.aktiv { color: var(--feher); border-color: var(--piros); }
+.kozep { text-align: center; padding-top: 32px; }
+.avatar { width: 110px; height: 110px; border-radius: 50%; object-fit: cover; border: 2px solid var(--piros); display: block; margin: 0 auto 16px; background: var(--felulet); }
+.avatar-betu { display: flex; align-items: center; justify-content: center; font-family: 'Bebas Neue', sans-serif; font-size: 52px; }
+.nev { font-family: 'Bebas Neue', sans-serif; font-size: 34px; letter-spacing: 1px; margin: 0; }
+.cim { margin: 4px 0 16px; font-size: 17px; }
+.halk { color: var(--halk); font-size: 15px; margin: 8px 0; }
+.kartya { background: var(--felulet); border-radius: 14px; padding: 20px 16px; margin: 24px 0; }
+.kartya-cim { font-family: 'Bebas Neue', sans-serif; font-size: 15px; letter-spacing: 2px; color: var(--halk); margin: 0 0 4px; }
+.kod { font-family: 'Bebas Neue', sans-serif; font-size: 46px; letter-spacing: 4px; margin: 0; user-select: all; -webkit-user-select: all; }
+.gomb { display: flex; align-items: center; justify-content: center; width: 100%; height: 58px; border-radius: 14px; border: none; font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 1px; background: var(--feher); color: var(--hatter); cursor: pointer; text-decoration: none; margin-top: 12px; }
+.gomb.masodlagos { background: none; color: var(--feher); border: 1px solid var(--keret); cursor: default; }
+.red { width: 170px; display: block; margin: 0 auto 16px; }

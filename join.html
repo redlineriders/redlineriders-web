@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="hu">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Redline Riders</title>
+<link rel="stylesheet" href="/assets/rr.css">
+</head>
+<body>
+<main class="lap">
+  <header class="fej">
+    <div class="logo"><span class="piros">REDLINE</span> RIDERS</div>
+    <nav class="nyelv" id="nyelv"></nav>
+  </header>
+  <section id="tartalom" class="kozep"></section>
+</main>
+<script src="/assets/rr.js"></script>
+<script>
+// A meghivo oldala: redlineriders.com/join?ref=KOD (profile-info.tsx JOIN_BASE).
+// EGY QR minden platformra: ez a koztes oldal donti el a telefon tipusa szerint a gombot.
+// noindex: a meghivo a felhasznalonevet mutatja, a keresoben nincs keresnivaloja.
+(function () {
+  var SZ = {
+    hu: { title: 'Meghívó', cim: 'meghívott a Redline Riders-be', leiras: 'Rögzítsd a motoros útjaidat, fedezz fel új utakat, és gyűjts trófeákat.',
+      kodCim: 'MEGHÍVÓKÓD', kodInfo: 'Az app első indításakor add meg ezt a kódot.', masol: 'MÁSOLÁS', masolva: 'MÁSOLVA',
+      rossz: 'Ez a meghívó nem érvényes.', hiba: 'Nem sikerült betölteni. Ellenőrizd a netkapcsolatot.', ujra: 'ÚJRA', tolt: 'Betöltés…' },
+    de: { title: 'Einladung', cim: 'hat dich zu Redline Riders eingeladen', leiras: 'Zeichne deine Motorradtouren auf, entdecke neue Strecken und sammle Trophäen.',
+      kodCim: 'EINLADUNGSCODE', kodInfo: 'Gib diesen Code beim ersten Start der App ein.', masol: 'KOPIEREN', masolva: 'KOPIERT',
+      rossz: 'Diese Einladung ist nicht gültig.', hiba: 'Laden fehlgeschlagen. Prüfe deine Internetverbindung.', ujra: 'ERNEUT', tolt: 'Wird geladen…' },
+    en: { title: 'Invite', cim: 'invited you to Redline Riders', leiras: 'Record your motorcycle rides, discover new roads and collect trophies.',
+      kodCim: 'INVITE CODE', kodInfo: 'Enter this code when you first open the app.', masol: 'COPY', masolva: 'COPIED',
+      rossz: 'This invite is not valid.', hiba: 'Could not load. Check your internet connection.', ujra: 'RETRY', tolt: 'Loading…' }
+  };
+  var kod = (new URLSearchParams(location.search).get('ref') || '').trim();
+  var nyelv = RR.nyelvValaszt();
+  var allapot = 'tolt';
+  var adat = null;
+  var tartalom = document.getElementById('tartalom');
+  function el(tag, osztaly, szoveg) {
+    var e = document.createElement(tag);
+    if (osztaly) e.className = osztaly;
+    if (szoveg != null) e.textContent = szoveg; // textContent: a felhasznalonev SOHA nem kerul HTML-kent az oldalba
+    return e;
+  }
+  function rajzol() {
+    var t = SZ[nyelv];
+    document.documentElement.lang = nyelv;
+    document.title = 'Redline Riders – ' + t.title;
+    RR.nyelvSav(document.getElementById('nyelv'), nyelv, function (u) { nyelv = u; rajzol(); });
+    tartalom.textContent = '';
+    if (allapot === 'tolt') { tartalom.appendChild(el('p', 'halk', t.tolt)); return; }
+    if (allapot === 'ok') {
+      var kep = RR.biztonsagosKep(adat.avatar_url);
+      if (kep) { var i = el('img', 'avatar'); i.src = kep; i.alt = ''; tartalom.appendChild(i); }
+      else { tartalom.appendChild(el('div', 'avatar avatar-betu', (adat.felhasznalonev || '?').charAt(0).toUpperCase())); }
+      tartalom.appendChild(el('p', 'nev', '@' + adat.felhasznalonev));
+      tartalom.appendChild(el('p', 'cim', t.cim));
+      tartalom.appendChild(el('p', 'halk', t.leiras));
+      var k = el('div', 'kartya');
+      k.appendChild(el('p', 'kartya-cim', t.kodCim));
+      k.appendChild(el('p', 'kod', kod));
+      k.appendChild(el('p', 'halk', t.kodInfo));
+      var b = el('button', 'gomb', t.masol);
+      b.type = 'button';
+      b.onclick = function () {
+        if (!navigator.clipboard) return;
+        navigator.clipboard.writeText(kod).then(function () {
+          b.textContent = SZ[nyelv].masolva;
+          setTimeout(function () { b.textContent = SZ[nyelv].masol; }, 2000);
+        }).catch(function () {});
+      };
+      k.appendChild(b);
+      tartalom.appendChild(k);
+    } else {
+      var r = el('img', 'red'); r.src = '/red_waving.png'; r.alt = ''; tartalom.appendChild(r);
+      tartalom.appendChild(el('p', 'cim', allapot === 'rossz' ? t.rossz : t.hiba));
+      if (allapot === 'hiba') { var u = el('button', 'gomb', t.ujra); u.type = 'button'; u.onclick = betolt; tartalom.appendChild(u); }
+    }
+    RR.boltGombok(nyelv).forEach(function (g) { tartalom.appendChild(g); });
+  }
+  function betolt() {
+    if (!/^[A-Za-z0-9_-]{1,32}$/.test(kod)) { allapot = 'rossz'; rajzol(); return; }
+    allapot = 'tolt'; rajzol();
+    RR.rpc('nyilvanos_meghivo', { p_kod: kod }).then(function (sorok) {
+      if (Array.isArray(sorok) && sorok.length > 0) { adat = sorok[0]; allapot = 'ok'; }
+      else { allapot = 'rossz'; }
+      rajzol();
+    }).catch(function () { allapot = 'hiba'; rajzol(); });
+  }
+  betolt();
+})();
+</script>
+</body>
+</html>
