@@ -319,13 +319,19 @@
       tartalom.appendChild(fl);
     }
 
+    // 2026-10-11 (Zsolt): a QR-bol erkezo latogato fo teendoje a LETOLTES - ezert a bolt-gomb a feher (elsodleges),
+    // a SHARE korvonalas, es alul egy mindig latszo letoltes-sav (RR.letoltesSav az rr.js-ben).
     var gb = el('div', 'gombok');
-    RR.boltGombok(nyelv).forEach(function (b) { gb.appendChild(b); });
-    var mg = el('button', 'gomb', t.megosztom);
+    gb.id = 'boltok';
+    RR.boltGombok(nyelv, true).forEach(function (b) { gb.appendChild(b); });
+    var mg = el('button', 'gomb masodlagos', t.megosztom);
     mg.type = 'button';
+    mg.style.cursor = 'pointer';
     mg.onclick = megoszt;
     gb.appendChild(mg);
     tartalom.appendChild(gb);
+    // VEDETT HIVAS: ha a bongeszo meg a regi rr.js-t tartja gyorsitotarban, az oldal ne torjon el.
+    if (RR.letoltesSav) RR.letoltesSav(nyelv);
   }
   function rajzol() {
     var t = SZ[nyelv];

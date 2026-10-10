@@ -43,15 +43,51 @@
     ios: { hu: 'Hamarosan az App Store-ban', de: 'Bald im App Store', en: 'Coming soon to the App Store' },
     android: { hu: 'Hamarosan Androidra', de: 'Bald für Android', en: 'Coming soon for Android' }
   };
-  function boltGombok(nyelv) {
+  // elsodleges (2026-10-11): az ut-oldalon a letoltes a fo teendo -> feher gomb. A /join e nelkul hivja (valtozatlan).
+  function boltGombok(nyelv, elsodleges) {
     var p = platform();
     var melyik = p === 'desktop' ? ['ios', 'android'] : [p];
     return melyik.map(function (k) {
       var d = document.createElement('div');
-      d.className = 'gomb masodlagos';
+      d.className = elsodleges ? 'gomb' : 'gomb masodlagos';
+      d.style.cursor = 'default';
       d.textContent = BOLT[k][nyelv];
       return d;
     });
+  }
+  // LETOLTES-SAV (2026-10-11, Zsolt): a falikep QR-jebol erkezo latogato fo teendoje a letoltes, de a bolt-gombok
+  // a lap aljan vannak -> alul egy mindig latszo sav feher gombbal. Az elesitesig a gomb a lap aljara gorget
+  // (#boltok, ott a "Hamarosan" gombok); elesiteskor itt kap linket a BOLT tablabol, platform szerint.
+  // MIERT also sav es nem gomb a cim alatt: az gorgeteskor eltunne, a sav vegig ott van, es nem takar tartalmat.
+  var SAV = { hu: 'APP LETÖLTÉSE', de: 'APP HOLEN', en: 'GET THE APP' };
+  function letoltesSav(nyelv) {
+    var regi = document.getElementById('letoltes-sav');
+    if (regi) regi.remove();
+    var sav = document.createElement('div');
+    sav.id = 'letoltes-sav';
+    sav.className = 'letoltes-sav';
+    var belso = document.createElement('div');
+    belso.className = 'letoltes-belso';
+    var logo = document.createElement('div');
+    logo.className = 'logo letoltes-logo';
+    var p1 = document.createElement('span');
+    p1.className = 'piros';
+    p1.textContent = 'REDLINE';
+    logo.appendChild(p1);
+    logo.appendChild(document.createTextNode(' RIDERS'));
+    var g = document.createElement('button');
+    g.type = 'button';
+    g.className = 'gomb letoltes-gomb';
+    g.textContent = SAV[nyelv] || SAV.en;
+    g.onclick = function () {
+      var b = document.getElementById('boltok');
+      if (b) b.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    };
+    belso.appendChild(logo);
+    belso.appendChild(g);
+    sav.appendChild(belso);
+    document.body.appendChild(sav);
+    document.body.classList.add('van-sav');
   }
   function rpc(nev, parameterek) {
     return fetch(SB_URL + '/rest/v1/rpc/' + nev, {
@@ -69,4 +105,5 @@
   }
   window.RR = { nyelvValaszt: nyelvValaszt, nyelvSav: nyelvSav, platform: platform,
     boltGombok: boltGombok, rpc: rpc, biztonsagosKep: biztonsagosKep };
+  window.RR.letoltesSav = letoltesSav;
 })();
