@@ -163,6 +163,14 @@
       if (p[0] < minX) minX = p[0]; if (p[0] > maxX) maxX = p[0];
       if (p[1] < minY) minY = p[1]; if (p[1] > maxY) maxY = p[1];
     });
+    // NORMALIZALAS (2026-10-11): a nyers fokok (pl. 6.77 / -48.62) egy ~0.01 fokos viewBox-ban harmincezerszeres
+    // nagyitast jelentettek. A Safari (WebKit) az SVG-utvonalat csokkentett pontossaggal szamolja, es ekkora
+    // nagyitasnal a vonal eltunt - minel rovidebb az ut, annal biztosabban (az 1 km-es Giengen Szivverese ures volt).
+    // Most minden pont egy 1000-es skalara kerul a kozeppontbol, igy a nagyitas kicsi es utmerettol fuggetlen.
+    var kx0 = (minX + maxX) / 2, ky0 = (minY + maxY) / 2;
+    var sk = 1000 / (Math.max(maxX - minX, maxY - minY) || 0.0001);
+    xy = xy.map(function (p) { return [(p[0] - kx0) * sk, (p[1] - ky0) * sk]; });
+    minX = (minX - kx0) * sk; maxX = (maxX - kx0) * sk; minY = (minY - ky0) * sk; maxY = (maxY - ky0) * sk;
     var oldal = Math.max(maxX - minX, maxY - minY) * 1.16 || 0.002;
     var vx = (minX + maxX) / 2 - oldal / 2, vy = (minY + maxY) / 2 - oldal / 2;
     var svg = svgEl('svg', { viewBox: [vx, vy, oldal, oldal].join(' '), 'class': 'vonal' });

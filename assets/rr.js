@@ -68,7 +68,9 @@
     sav.className = 'letoltes-sav';
     var belso = document.createElement('div');
     belso.className = 'letoltes-belso';
-    var logo = document.createElement('div');
+    // A logo LINK a fooldalra (Zsolt, 2026-10-11): aki a QR-bol jon, igy a weboldalt is megtalalja.
+    var logo = document.createElement('a');
+    logo.href = '/';
     logo.className = 'logo letoltes-logo';
     var p1 = document.createElement('span');
     p1.className = 'piros';
