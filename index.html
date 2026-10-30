@@ -1,26 +1,90 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Redline Riders</title>
+<meta name="description" content="Redline Riders – built by a rider, for riders. Shop and app.">
+<!--
+  FOOLDAL (2026-10-30). Elotte "Coming soon" placeholder volt.
+  MIERT GOMB: aki a nevjegykartyarol vagy szajhagyomanybol a redlineriders.com-ot irja be, a webshopba jusson.
+  MIERT IMPRESSUM + DATENSCHUTZ A LABLECBEN: amig ures placeholder volt, nem kellett; a shop-gombbal az oldal
+  uzleti celu lett -> § 5 DDG: az Impressum egy kattintassal elerheto kell legyen (a webshop meglevo oldalaira mutat).
+  MIERT "BEING BUILT" (Zsolt): az app meg keszul - a jelmondat ezt mondja ki.
+  MIERT NINCS KEDVEZMENYKOD A GOMBON: a kod csak a nevjegykartya QR-jan (/ride) jar.
+  NYELV: RR.nyelvValaszt() (URL ?lang= > korabbi valasztas > bongeszo nyelve > angol), mint a /join es /route.
+  A webshop csak EN/DE: a magyar latogato az angol boltba jut (a bolt orszag szerint ugyis atiranyit).
+  VERZIOJEL: az rr.css/rr.js ?v= jelet itt is at kell irni, ha azok valtoznak (lasd join.html).
+-->
+<link rel="stylesheet" href="/assets/rr.css?v=20261011">
 <style>
-  html,body{height:100%;margin:0}
-  body{background:#0A0A0A;color:#F5F5F5;display:flex;align-items:center;
-       justify-content:center;font-family:system-ui,-apple-system,sans-serif}
-  .w{text-align:center;padding:24px}
-  img{width:200px;max-width:60vw;height:auto;display:block;margin:0 auto 28px}
-  .l{width:64px;height:3px;background:#E63030;margin:0 auto 16px}
-  h1{font-size:2rem;letter-spacing:.14em;margin:0 0 12px;text-transform:uppercase}
-  p{color:#8A8A8A;font-size:.95rem;margin:0}
+  .fo { text-align: center; padding-top: 40px; }
+  .fo .red { width: 190px; max-width: 60vw; margin: 0 auto 24px; }
+  .csik { width: 64px; height: 3px; background: var(--piros); margin: 0 auto 18px; }
+  .focim { font-family: 'Bebas Neue', sans-serif; font-size: 44px; letter-spacing: 2px; line-height: 1; margin: 0 0 10px; }
+  .jelmondat { font-size: 17px; margin: 0 0 28px; }
+  .fo .gomb { max-width: 320px; margin: 0 auto; transition: background .2s, color .2s; }
+  .fo .gomb:hover, .fo .gomb:active { background: var(--piros); color: var(--feher); }
+  .app { color: var(--halk); font-size: 15px; margin: 18px 0 0; }
+  .kovess { font-family: 'Bebas Neue', sans-serif; font-size: 15px; letter-spacing: 2px; color: var(--halk); margin: 40px 0 10px; }
+  .kozossegi { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+  .kozossegi a { color: var(--feher); text-decoration: none; border: 1px solid var(--keret); border-radius: 999px; padding: 8px 16px; font-size: 15px; }
+  .kozossegi a:hover { border-color: var(--piros); }
+  .lablec { margin-top: 48px; padding-top: 16px; border-top: 1px solid var(--keret); text-align: center; font-size: 13px; color: var(--halk); }
+  .lablec a { color: var(--halk); }
 </style>
 </head>
 <body>
-  <div class="w">
-    <img src="red_waving.png" alt="Red">
-    <div class="l"></div>
-    <h1>Redline Riders</h1>
-    <p>Coming soon.</p>
-  </div>
+<main class="lap">
+  <header class="fej">
+    <div class="logo"><span class="piros">REDLINE</span> RIDERS</div>
+    <nav class="nyelv" id="nyelv"></nav>
+  </header>
+  <section class="fo">
+    <img class="red" src="/red_waving.png" alt="Red">
+    <div class="csik"></div>
+    <h1 class="focim"><span class="piros">REDLINE</span> RIDERS</h1>
+    <p class="jelmondat" id="jelmondat">Being built by a rider. For riders.</p>
+    <a class="gomb" id="gomb" href="https://shop.redlineriders.com">SHOP NOW</a>
+    <p class="app" id="app">The app is coming soon.</p>
+    <p class="kovess" id="kovess">FOLLOW</p>
+    <div class="kozossegi">
+      <a href="https://www.tiktok.com/@bolgarmoto" target="_blank" rel="noopener">TikTok @bolgarmoto</a>
+      <!-- INSTAGRAM: ide jon a Redline Riders marka-fiokja, ha megvan:
+      <a href="https://www.instagram.com/HANDLE" target="_blank" rel="noopener">Instagram @HANDLE</a> -->
+    </div>
+  </section>
+  <footer class="lablec">
+    <a id="impressum" href="https://shop.redlineriders.com/policies/legal-notice">Legal notice</a> ·
+    <a id="datenschutz" href="https://shop.redlineriders.com/policies/privacy-policy">Privacy</a>
+  </footer>
+</main>
+<script src="/assets/rr.js?v=20261011"></script>
+<script>
+(function () {
+  var SZ = {
+    en: { jel: 'Being built by a rider. For riders.', gomb: 'SHOP NOW', app: 'The app is coming soon.', kov: 'FOLLOW',
+          imp: 'Legal notice', adat: 'Privacy', bolt: 'https://shop.redlineriders.com' },
+    de: { jel: 'Von einem Biker gebaut. Für Biker.', gomb: 'ZUM SHOP', app: 'Die App kommt bald.', kov: 'FOLGEN',
+          imp: 'Impressum', adat: 'Datenschutz', bolt: 'https://shop.redlineriders.com/de' },
+    hu: { jel: 'Egy motoros építi. Motorosoknak.', gomb: 'IRÁNY A SHOP', app: 'Az app hamarosan érkezik.', kov: 'KÖVESS',
+          imp: 'Impresszum', adat: 'Adatvédelem', bolt: 'https://shop.redlineriders.com' }
+  };
+  var nyelv = RR.nyelvValaszt();
+  function rajzol() {
+    var t = SZ[nyelv] || SZ.en;
+    document.documentElement.lang = nyelv;
+    document.getElementById('jelmondat').textContent = t.jel;
+    var g = document.getElementById('gomb'); g.textContent = t.gomb; g.href = t.bolt;
+    document.getElementById('app').textContent = t.app;
+    document.getElementById('kovess').textContent = t.kov;
+    var elo = nyelv === 'de' ? 'https://shop.redlineriders.com/de' : 'https://shop.redlineriders.com';
+    var i = document.getElementById('impressum'); i.textContent = t.imp; i.href = elo + '/policies/legal-notice';
+    var d = document.getElementById('datenschutz'); d.textContent = t.adat; d.href = elo + '/policies/privacy-policy';
+    RR.nyelvSav(document.getElementById('nyelv'), nyelv, function (u) { nyelv = u; rajzol(); });
+  }
+  rajzol();
+})();
+</script>
 </body>
 </html>
