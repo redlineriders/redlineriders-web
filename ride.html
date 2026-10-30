@@ -9,19 +9,22 @@
   /ride = a nevjegykartya QR-kodjanak celja (2026-10-30; elotte /card).
   MIERT NEM /card: a gyanakvo vevo a "card" szot a bankkartyajaval kotne ossze -> nem nyitja meg (Zsolt).
   MIERT KULON OLDAL: a kinyomtatott QR nem modosithato; ha a kod vagy a celoldal valtozik
-  (pl. PRIVAT15 -> PRIVAT10), csak a CEL sort + a refresh sort + a tartalek linket kell atirni, a kartyak maradnak.
+  (pl. PRIVAT15 -> PRIVAT10), csak az alabbi CEL sort + a refresh sort + a tartalek linket kell atirni, a kartyak maradnak.
+  rr_pct: a boltban felugro udvozlo ablak ebbol irja ki a szazalekot ("15 %"). KODCSEREKOR EZT IS AT KELL IRNI
+  (PRIVAT10 -> rr_pct=10), kulonben az ablak mast iger, mint amit a kod levon (UWG 5).
+  MIERT NEM A KARTYAN A SZAZALEK: a kartya nyomtatott, a szazalek csak itt es az ablakban el, igy cserelheto.
   A Shopify /discount/ link automatikusan rarakja a kodot (cookie-elutasitassal is mukodik, 10-30 merve).
   UTM: utm_source=qr, utm_medium=visitenkarte (lathato a cimsorban, ezert nem "card").
   KESOBB (TODO): sajat szkenneles-szamlalo (Supabase), mert az Analytics csak cookie-elfogadasnal szamol.
 -->
 <script>
-  var CEL = "https://shop.redlineriders.com/discount/PRIVAT15?redirect=/collections/all-apparel&utm_source=qr&utm_medium=visitenkarte&utm_campaign=privat15";
+  var CEL = "https://shop.redlineriders.com/discount/PRIVAT15?redirect=/collections/all-apparel&utm_source=qr&utm_medium=visitenkarte&utm_campaign=privat15&rr_pct=15";
   location.replace(CEL);
 </script>
-<meta http-equiv="refresh" content="0;url=https://shop.redlineriders.com/discount/PRIVAT15?redirect=/collections/all-apparel&utm_source=qr&utm_medium=visitenkarte&utm_campaign=privat15">
+<meta http-equiv="refresh" content="0;url=https://shop.redlineriders.com/discount/PRIVAT15?redirect=/collections/all-apparel&utm_source=qr&utm_medium=visitenkarte&utm_campaign=privat15&rr_pct=15">
 <style>body{margin:0;background:#0A0A0A;color:#F5F5F5;font-family:Arial,sans-serif;display:flex;min-height:100vh;align-items:center;justify-content:center;text-align:center}a{color:#F5F5F5}</style>
 </head>
 <body>
-<p>Redline Riders…<br><a href="https://shop.redlineriders.com/discount/PRIVAT15?redirect=/collections/all-apparel&utm_source=qr&utm_medium=visitenkarte&utm_campaign=privat15">Hier tippen, falls nichts passiert</a></p>
+<p>Redline Riders…<br><a href="https://shop.redlineriders.com/discount/PRIVAT15?redirect=/collections/all-apparel&utm_source=qr&utm_medium=visitenkarte&utm_campaign=privat15&rr_pct=15">Hier tippen, falls nichts passiert</a></p>
 </body>
 </html>
